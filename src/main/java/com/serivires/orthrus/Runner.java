@@ -1,7 +1,5 @@
 package com.serivires.orthrus;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.serivires.orthrus.downloader.WebtoonDownloader;
 
 public class Runner {
@@ -19,12 +17,6 @@ public class Runner {
 	public static boolean isArrayEmpty(String[] array) {
 		if (array == null || array.length == 0) {
 			return true;
-		}
-
-		for (String str : array) {
-			if (StringUtils.isEmpty(str)) {
-				return true;
-			}
 		}
 
 		return false;
