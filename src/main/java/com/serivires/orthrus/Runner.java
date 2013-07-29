@@ -6,13 +6,27 @@ import com.serivires.orthrus.downloader.WebtoonDownloader;
 
 public class Runner {
 	public static void main(String[] args) throws Exception {
-		String title = args[0];
-		if (StringUtils.isEmpty(title)) {
+		if (isArrayEmpty(args)) {
 			System.out.println("제목을 올바르게 입력해 주세요.");
 			return;
 		}
 
+		String title = args[0];
 		WebtoonDownloader downloader = new WebtoonDownloader();
 		downloader.autoSave(title);
+	}
+
+	public static boolean isArrayEmpty(String[] array) {
+		if (array == null || array.length == 0) {
+			return true;
+		}
+
+		for (String str : array) {
+			if (StringUtils.isEmpty(str)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
