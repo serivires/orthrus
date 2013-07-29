@@ -1,10 +1,16 @@
 package com.serivires.orthrus.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 public class Webtoon {
 	public static final Webtoon emptyObject = new Webtoon();
 
 	private String title;
+
 	private String id;
+
 	private int lastPage;
 
 	public String getTitle() {
@@ -33,41 +39,16 @@ public class Webtoon {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + lastPage;
-		result = prime * result + ((title == null) ? 0 : title.hashCode());
-		return result;
+		return HashCodeBuilder.reflectionHashCode(this);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Webtoon other = (Webtoon) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (lastPage != other.lastPage)
-			return false;
-		if (title == null) {
-			if (other.title != null)
-				return false;
-		} else if (!title.equals(other.title))
-			return false;
-		return true;
+		return EqualsBuilder.reflectionEquals(this, obj);
 	}
 
 	@Override
 	public String toString() {
-		return "Webtoon [title=" + title + ", id=" + id + ", lastPage=" + lastPage + "]";
+		return ToStringBuilder.reflectionToString(this);
 	}
-
 }
