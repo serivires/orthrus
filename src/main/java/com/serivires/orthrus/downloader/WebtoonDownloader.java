@@ -3,13 +3,12 @@ package com.serivires.orthrus.downloader;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.http.client.utils.URIBuilder;
 
 import com.serivires.orthrus.commons.HttpClientUtils;
+import com.serivires.orthrus.model.DownloadFileInfo;
 import com.serivires.orthrus.model.Webtoon;
 import com.serivires.orthrus.parse.WebtoonParser;
 
@@ -90,40 +89,16 @@ public class WebtoonDownloader {
 	public int saveByPage(URI uri, String path) throws Exception {
 		String html = HttpClientUtils.readHtmlPage(uri);
 		List<String> imageUrlList = webtoonPage.selectImgByHtmlPage(html);
-		imageFileSave(imageUrlList, path);
-
-		return imageUrlList.size();
-	}
-
-	/**
-	 * 이미지파일을 다운받아 저장합니다.
-	 * 
-	 * @param imageUrlList
-	 * @param path
-	 */
-	public void imageFileSave(List<String> imageUrlList, String path) {
-		for (String url : imageUrlList) {
-			String fileName = getFileNameByURL(url);
-			File file = new File(path, fileName);
-
-			try {
-				FileUtils.copyURLToFile(new URL(url), file);
-				System.out.println(file.getAbsolutePath());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		
+		DownloadFileInfo fileInfo = new DownloadFileInfo();
+		fileInfo.setRefererURL(uri.toString());
+		fileInfo.setPreSavePath(path);
+		for(String imageURL : imageUrlList) {
+			fileInfo.setDownloadURL(imageURL);
+			FileDownloadService.downloadFile(fileInfo);
 		}
-	}
-
-	/**
-	 * URL에서 파일 이름을 반환합니다.
-	 * 
-	 * @param fileUrl
-	 * @return
-	 */
-	private String getFileNameByURL(String fileUrl) {
-		String[] depths = fileUrl.split("/");
-		return depths[depths.length - 1];
+		
+		return imageUrlList.size();
 	}
 
 	/**

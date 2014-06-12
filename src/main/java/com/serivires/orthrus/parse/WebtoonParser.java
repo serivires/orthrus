@@ -3,6 +3,7 @@ package com.serivires.orthrus.parse;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -93,7 +94,10 @@ public class WebtoonParser {
 		List<String> imageUrlList = new ArrayList<String>();
 		for (Element element : elements) {
 			String fileUrl = element.attr("abs:src");
-			imageUrlList.add(fileUrl);
+			
+			if (StringUtils.isBlank(fileUrl) == false) {
+				imageUrlList.add(fileUrl);
+			}
 		}
 
 		return imageUrlList;
