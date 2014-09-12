@@ -10,6 +10,7 @@ public class Runner {
 		}
 
 		String title = args[0];
+		
 		WebtoonDownloader downloader = new WebtoonDownloader();
 		downloader.autoSave(title);
 	}

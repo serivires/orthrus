@@ -17,27 +17,21 @@ public class WebtoonDownloader {
 
 	private static final String NAVER_WEBTOON_SCHEME = "http";
 	private static final String NAVER_WEBTOON_HOST = "comic.naver.com";
-
+	
 	/**
 	 * 실제 웹툰이 보여지는 페이지 주소를 반환합니다.
 	 * 
 	 * @param titleId
 	 * @param no
 	 * @return
+	 * @throws URISyntaxException 
 	 */
-	public URI buildWebtoonDetailPageURI(String titleId, String no) {
+	public URI buildWebtoonDetailPageURI(String titleId, String no) throws URISyntaxException {
 		URIBuilder uriBuilder = new URIBuilder();
 		uriBuilder.setScheme(NAVER_WEBTOON_SCHEME).setHost(NAVER_WEBTOON_HOST).setPath("/webtoon/detail.nhn");
 		uriBuilder.setParameter("titleId", titleId).setParameter("no", no);
 
-		URI uri = null;
-		try {
-			uri = uriBuilder.build();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-
-		return uri;
+		return uriBuilder.build();
 	}
 
 	/**
@@ -45,20 +39,14 @@ public class WebtoonDownloader {
 	 * 
 	 * @param title
 	 * @return
+	 * @throws URISyntaxException 
 	 */
-	protected URI buildWebtoonSearchPageURI(String title) {
+	protected URI buildWebtoonSearchPageURI(String title) throws URISyntaxException {
 		URIBuilder uriBuilder = new URIBuilder();
 		uriBuilder.setScheme(NAVER_WEBTOON_SCHEME).setHost(NAVER_WEBTOON_HOST).setPath("/search.nhn");
 		uriBuilder.setParameter("m", "webtoon").setParameter("type", "title").setParameter("keyword", title);
-
-		URI uri = null;
-		try {
-			uri = uriBuilder.build();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-
-		return uri;
+		
+		return uriBuilder.build();
 	}
 
 	public void autoSave(String title) throws Exception {
@@ -66,8 +54,8 @@ public class WebtoonDownloader {
 		if (Webtoon.emptyObject.equals(webToon)) {
 			return;
 		}
-
-		String prePath = File.separator + webToon.getTitle() + File.separator;
+		
+		String prePath = String.format("%s\\Desktop\\%s\\", System.getProperty("user.home"), webToon.getTitle());
 		int downloadCount = 0;
 		for (int i = 1; i <= webToon.getLastPage(); i++) {
 			URI uri = buildWebtoonDetailPageURI(webToon.getId(), i + "");
@@ -131,6 +119,9 @@ public class WebtoonDownloader {
 	/**
 	 * 웹툰의 마지막화 번호를 반환합니다.
 	 * 
+	 * http://comic.naver.com/webtoon/detail.nhn?titleId=316912&no=188
+	 * no 파라미터에 유효한 숫자를 넘기지 않으면 마지막화 페이지로 이동한다.
+	 * 
 	 * @param titleid
 	 * @return
 	 * @throws Exception
@@ -138,6 +129,7 @@ public class WebtoonDownloader {
 	public int getLastPageNumber(String titleid) throws Exception {
 		URI uri = buildWebtoonDetailPageURI(titleid, 0 + "");
 		String htmlString = HttpClientUtils.readHtmlPage(uri);
+		
 		return webtoonPage.getLastPageNumber(htmlString);
 	}
 }

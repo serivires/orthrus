@@ -1,6 +1,5 @@
 package com.serivires.orthrus.parse;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -9,77 +8,66 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import com.serivires.orthrus.model.Webtoon;
 
 public class WebtoonParser {
 
 	/**
+	 * 해당 페이지에 있는 현재 페이지 숫자 정보를 반환합니다.
 	 * 
-	 * <meta property="og:url" content=
-	 * "http://comic.naver.com/webtoon/detail.nhn?titleId=258206&amp;no=67">
+	 * http://comic.naver.com/webtoon/detail.nhn?titleId=316912&no=188
+	 * <meta property="og:url" content="http://comic.naver.com/webtoon/detail.nhn?titleId=316912&amp;no=188">
 	 * 
 	 * @param htmlString
 	 * @return
 	 * @throws Exception
 	 */
-	public int getLastPageNumber(String htmlString) throws Exception {
+	public int getLastPageNumber(String htmlString) {
 		Document doc = Jsoup.parse(htmlString);
-		Elements elements = doc.select("head meta");
-
-		if (elements.isEmpty()) {
-			return 0;
-		}
-
-		for (Element element : elements) {
-			Elements tmp = element.getElementsByAttributeValue("property", "og:url");
-			if (!tmp.isEmpty()) {
-				String url = tmp.first().attr("abs:content");
-				String no = url.substring(url.indexOf("no=")).replace("no=", "");
-				return Integer.parseInt(no);
-			}
-		}
-
-		return 0;
+		Element urlElement = doc.select("head meta[property=og:url]").first();
+		String url = urlElement.attr("abs:content");
+		
+		String pageNumber = url.substring(url.indexOf("no=")).replace("no=", "");
+		return Integer.parseInt(pageNumber);
 	}
-
-	public Element selectElementByFirst(Elements elements, String selectQuery) {
-		for (Element element : elements) {
-			Elements tmp = element.select(selectQuery);
-			if (tmp.isEmpty()) {
-				continue;
-			}
-
-			return tmp.first();
-		}
-
-		return null;
-	}
-
+	
+	/**
+	 * 
+	 * @param url
+	 * @return String
+	 */
 	private String getIDByUrl(String url) {
 		int startIndex = url.indexOf("titleId=");
 		return url.substring(startIndex).replace("titleId=", "");
 	}
-
-	public Webtoon getWebToonInfo(String HtmlString) throws Exception {
+	
+	/**
+	 * 웹툰 이름으로 검색된 결과의 첫번째 항목에 대한 정보를 반환합니다.
+	 * 
+	 * @param HtmlString
+	 * @return Webtoon
+	 */
+	public Webtoon getWebToonInfo(String HtmlString) {
 		Document doc = Jsoup.parse(HtmlString);
 		Elements elements = doc.select(".resultList li");
 
-		if (elements.isEmpty()) {
+		if (elements.isEmpty() == true) {
 			return Webtoon.emptyObject;
 		}
+		
+		Element element = elements.select("h5 a").first();
+		String urlPath = element.attr("href");
+		
+		Webtoon webToon = new Webtoon();
+		webToon.setId(getIDByUrl(urlPath));
+		webToon.setTitle(element.html());
 
-		Element element = selectElementByFirst(elements, "h5 a");
-		if (element != null) {
-			Webtoon webToon = new Webtoon();
-			String urlPath = element.attr("href");
-			webToon.setId(getIDByUrl(urlPath));
-			webToon.setTitle(element.html());
-
-			return webToon;
-		}
-
-		return Webtoon.emptyObject;
+		return webToon;
 	}
+
 
 	/**
 	 * 한 페이지 내에 있는 유효한 이미지 파일 주소 목록을 반환합니다.
@@ -91,16 +79,18 @@ public class WebtoonParser {
 		Document doc = Jsoup.parse(HtmlString);
 		Elements elements = doc.select(".wt_viewer img");
 
-		List<String> imageUrlList = new ArrayList<String>();
-		for (Element element : elements) {
-			String fileUrl = element.attr("abs:src");
-			
-			if (StringUtils.isBlank(fileUrl) == false) {
-				imageUrlList.add(fileUrl);
+		return FluentIterable.from(elements).transform(new Function<Element, String>() {
+			public String apply(Element element) {
+				return element.attr("abs:src");
 			}
-		}
-
-		return imageUrlList;
+		}).filter(new Predicate<String>() {
+			public boolean apply(String src) {
+				return StringUtils.isNotBlank(src);
+			}
+		}).filter(new Predicate<String>() { // 광고 이미지
+			public boolean apply(String src) {
+				return (StringUtils.contains(src, "txt_ads.png") == false);
+			}
+		}).toList();
 	}
-
 }

@@ -34,12 +34,12 @@ public class FileDownloadService {
 			logger.info("FileName: {}", fileURL.getFileName());
 		} catch (Exception e) {
 			logger.error("getHtmlString(): {}", e.toString());
-			e.printStackTrace();
+			return false;
 		} finally {
 			httpclient.getConnectionManager().shutdown();
 		}
 
-		return false;
+		return true;
 	}
 
 	public ExecutorService downloadFiles(List<DownloadFileInfo> fileURLs, boolean isAsync) {
