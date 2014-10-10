@@ -16,8 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import com.serivires.orthrus.model.DownloadFileInfo;
 
-
-
 public class FileDownloadService {
 	private static Logger logger = LoggerFactory.getLogger(FileDownloadService.class);
 	

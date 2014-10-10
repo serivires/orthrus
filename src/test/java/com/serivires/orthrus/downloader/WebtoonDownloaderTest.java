@@ -5,13 +5,17 @@ import static org.junit.Assert.assertThat;
 
 import java.net.URI;
 
+import org.junit.Before;
 import org.junit.Test;
 
-import com.serivires.orthrus.downloader.WebtoonDownloader;
-
 public class WebtoonDownloaderTest {
-	WebtoonDownloader webtoonDownload = new WebtoonDownloader();
-
+	WebtoonDownloader webtoonDownload;
+	
+	@Before
+	public void setup() throws Exception {
+		webtoonDownload = new WebtoonDownloader();
+	}
+	
 	@Test
 	public void buildWebtoonDetailPageURITest() throws Exception {
 		// given

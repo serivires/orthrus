@@ -3,7 +3,10 @@ package com.serivires.orthrus.downloader;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.client.utils.URIBuilder;
 
@@ -11,12 +14,19 @@ import com.serivires.orthrus.commons.HttpClientUtils;
 import com.serivires.orthrus.model.DownloadFileInfo;
 import com.serivires.orthrus.model.Webtoon;
 import com.serivires.orthrus.parse.WebtoonParser;
+import com.serivires.orthrus.view.DefaultViewer;
 
 public class WebtoonDownloader {
-	private final WebtoonParser webtoonPage = new WebtoonParser();
-
+	private final WebtoonParser webtoonPage;
+	private final DefaultViewer viewer;
+	
 	private static final String NAVER_WEBTOON_SCHEME = "http";
 	private static final String NAVER_WEBTOON_HOST = "comic.naver.com";
+	
+	public WebtoonDownloader() throws Exception {
+		webtoonPage = new WebtoonParser();
+		viewer = new DefaultViewer();
+	}
 	
 	/**
 	 * 실제 웹툰이 보여지는 페이지 주소를 반환합니다.
@@ -59,7 +69,7 @@ public class WebtoonDownloader {
 		int downloadCount = 0;
 		for (int i = 1; i <= webToon.getLastPage(); i++) {
 			URI uri = buildWebtoonDetailPageURI(webToon.getId(), i + "");
-			downloadCount += saveByPage(uri, prePath + i + "화" + File.separator);
+			downloadCount += saveByPage(uri, prePath + i + File.separator);
 		}
 
 		System.out.println("총 " + downloadCount + "개의파일이 다운로드 되었습니다.");
@@ -81,10 +91,17 @@ public class WebtoonDownloader {
 		DownloadFileInfo fileInfo = new DownloadFileInfo();
 		fileInfo.setRefererURL(uri.toString());
 		fileInfo.setPreSavePath(path);
+		
+		List<String> downloadFileNames = new ArrayList<String>();
 		for(String imageURL : imageUrlList) {
 			fileInfo.setDownloadURL(imageURL);
 			FileDownloadService.downloadFile(fileInfo);
+			downloadFileNames.add(fileInfo.getFileName());
 		}
+		
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("fileNames", downloadFileNames);
+		viewer.write(model, new File(fileInfo.getPreSavePath(), "viewer.html"));
 		
 		return imageUrlList.size();
 	}
