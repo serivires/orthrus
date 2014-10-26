@@ -28,7 +28,7 @@ public class HttpClientUtils {
 			HttpResponse response = httpclient.execute(httpget);
 			HttpEntity httpEntity = response.getEntity();
 			InputStream inputStream = httpEntity.getContent();
-			htmlString = IOUtils.toString(inputStream);
+			htmlString = IOUtils.toString(inputStream, "utf-8");
 
 			System.out.println(httpget.getURI());
 			System.out.println(response.getStatusLine());

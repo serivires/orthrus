@@ -1,11 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.springframework.samples</groupId>
-  <artifactId>webtoon_downloader</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  
-  <properties>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.serivires.orthrus</groupId>
+	<artifactId>orthrus</artifactId>
+	<version>1.1.0</version>
 
+	<properties>
 		<!-- Generic properties -->
 		<java.version>1.6</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -20,7 +19,6 @@
 
 		<!-- Test -->
 		<junit.version>4.11</junit.version>
-
 	</properties>
 	
 	<dependencies>
@@ -112,4 +110,28 @@
 			<version>1.5</version>
 		</dependency>
 	</dependencies>
+	
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2.1</version>
+				<configuration>
+					<finalName>orthrus</finalName> 
+					<appendAssemblyId>false</appendAssemblyId> 
+					<encoding>UTF-8</encoding>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>com.serivires.orthrus.Runner</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
