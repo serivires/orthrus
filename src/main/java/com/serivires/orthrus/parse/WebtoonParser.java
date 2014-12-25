@@ -1,5 +1,7 @@
 package com.serivires.orthrus.parse;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,8 +28,7 @@ public class WebtoonParser {
 	 */
 	public int getLastPageNumber(String htmlString) {
 		Document doc = Jsoup.parse(htmlString);
-		Element urlElement = doc.select("head meta[property=og:url]").first();
-		String url = urlElement.attr("abs:content");
+		String url = doc.select("head meta[property=og:url]").first().attr("abs:content");
 
 		String pageNumber = url.substring(url.indexOf("no=")).replace("no=", "");
 		return Integer.parseInt(pageNumber);
@@ -72,14 +73,15 @@ public class WebtoonParser {
 	 * 
 	 * @param doc
 	 * @return
+	 * @throws IOException
 	 */
-	public List<String> selectImgByHtmlPage(String HtmlString) {
-		Document doc = Jsoup.parse(HtmlString);
+	public List<String> selectImageUrlsBy(URL url) throws IOException {
+		Document doc = Jsoup.parse(url, 5000);
 		List<Element> elements = (List<Element>) doc.select(".wt_viewer img");
 
-		return elements.stream().map(element -> element.attr("abs:src"))//
-				.filter(src -> StringUtils.isNotBlank(src))//
-				.filter(src -> !StringUtils.contains(src, "txt_ads.png"))//
+		return elements.stream().map(element -> element.attr("src")) //
+				.filter(src -> StringUtils.isNotBlank(src)) //
+				.filter(src -> !StringUtils.contains(src, "txt_ads.png")) // 광고이미지
 				.collect(Collectors.toList());
 	}
 }

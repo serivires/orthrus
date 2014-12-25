@@ -5,10 +5,10 @@ import java.net.URI;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,24 +19,30 @@ public class HttpClientUtils {
 		new AssertionError();
 	}
 
-	public static String readHtmlPage(URI uri) {
-		HttpClient httpclient = new DefaultHttpClient();
-		HttpGet httpget = new HttpGet(uri);
-
+	public static String read(URI uri) {
+		CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 		String htmlString = null;
-		try {
-			HttpResponse response = httpclient.execute(httpget);
-			HttpEntity httpEntity = response.getEntity();
-			InputStream inputStream = httpEntity.getContent();
-			htmlString = IOUtils.toString(inputStream, "utf-8");
 
-			System.out.println(httpget.getURI());
-			System.out.println(response.getStatusLine());
+		try {
+			HttpGet httpget = new HttpGet(uri);
+			CloseableHttpResponse response = httpclient.execute(httpget);
+
+			try {
+				HttpEntity httpEntity = response.getEntity();
+				InputStream inputStream = httpEntity.getContent();
+				htmlString = IOUtils.toString(inputStream, "utf-8");
+
+				logger.info(httpget.getURI().toString());
+				logger.info(response.getStatusLine().toString());
+			} catch (Exception e) {
+				throw e;
+			} finally {
+				response.close();
+				httpclient.close();
+			}
 		} catch (Exception e) {
-			logger.error("getHtmlString(): {}", e.toString());
+			logger.error("readHtmlPage(): {}", e.toString());
 			e.printStackTrace();
-		} finally {
-			httpclient.getConnectionManager().shutdown();
 		}
 
 		return htmlString;

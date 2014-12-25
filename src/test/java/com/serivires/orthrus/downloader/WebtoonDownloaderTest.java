@@ -23,7 +23,7 @@ public class WebtoonDownloaderTest {
 		String no = "1";
 
 		// when
-		URI resultUri = webtoonDownload.buildWebtoonDetailPageURI(title, no);
+		URI resultUri = webtoonDownload.buildDetailPageURI(title, no);
 
 		// then
 		assertThat(resultUri.getPath(), is("/webtoon/detail.nhn"));

@@ -3,12 +3,14 @@ package com.serivires.orthrus.downloader;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.http.client.utils.URIBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.serivires.orthrus.commons.HttpClientUtils;
 import com.serivires.orthrus.model.DownloadFileInfo;
@@ -17,28 +19,31 @@ import com.serivires.orthrus.parse.WebtoonParser;
 import com.serivires.orthrus.view.DefaultViewer;
 
 public class WebtoonDownloader {
-	private final WebtoonParser webtoonPage;
+	private static Logger logger = LoggerFactory.getLogger(WebtoonDownloader.class);
+
+	private final WebtoonParser webtoonParser;
 	private final DefaultViewer viewer;
-	
+
 	private static final String NAVER_WEBTOON_SCHEME = "http";
 	private static final String NAVER_WEBTOON_HOST = "comic.naver.com";
-	
+	private static final String NAVER_WEBTOON_DETAIL = "/webtoon/detail.nhn";
+
 	public WebtoonDownloader() throws Exception {
-		webtoonPage = new WebtoonParser();
+		webtoonParser = new WebtoonParser();
 		viewer = new DefaultViewer();
 	}
-	
+
 	/**
 	 * 실제 웹툰이 보여지는 페이지 주소를 반환합니다.
 	 * 
 	 * @param titleId
 	 * @param no
 	 * @return
-	 * @throws URISyntaxException 
+	 * @throws URISyntaxException
 	 */
-	public URI buildWebtoonDetailPageURI(String titleId, String no) throws URISyntaxException {
+	public URI buildDetailPageURI(String titleId, String no) throws URISyntaxException {
 		URIBuilder uriBuilder = new URIBuilder();
-		uriBuilder.setScheme(NAVER_WEBTOON_SCHEME).setHost(NAVER_WEBTOON_HOST).setPath("/webtoon/detail.nhn");
+		uriBuilder.setScheme(NAVER_WEBTOON_SCHEME).setHost(NAVER_WEBTOON_HOST).setPath(NAVER_WEBTOON_DETAIL);
 		uriBuilder.setParameter("titleId", titleId).setParameter("no", no);
 
 		return uriBuilder.build();
@@ -49,13 +54,13 @@ public class WebtoonDownloader {
 	 * 
 	 * @param title
 	 * @return
-	 * @throws URISyntaxException 
+	 * @throws URISyntaxException
 	 */
 	protected URI buildWebtoonSearchPageURI(String title) throws URISyntaxException {
 		URIBuilder uriBuilder = new URIBuilder();
 		uriBuilder.setScheme(NAVER_WEBTOON_SCHEME).setHost(NAVER_WEBTOON_HOST).setPath("/search.nhn");
 		uriBuilder.setParameter("m", "webtoon").setParameter("type", "title").setParameter("keyword", title);
-		
+
 		return uriBuilder.build();
 	}
 
@@ -64,12 +69,16 @@ public class WebtoonDownloader {
 		if (Webtoon.emptyObject.equals(webToon)) {
 			return;
 		}
-		
-		String prePath = String.format("%s\\Desktop\\%s\\", System.getProperty("user.home"), webToon.getTitle());
+
 		int downloadCount = 0;
-		for (int i = 1; i <= webToon.getLastPage(); i++) {
-			URI uri = buildWebtoonDetailPageURI(webToon.getId(), i + "");
-			downloadCount += saveByPage(uri, prePath + i + File.separator);
+		int lastPageNumber = webToon.getLastPage();
+		String prePath = String.format("%s\\Desktop\\%s\\", System.getProperty("user.home"), webToon.getTitle());
+
+		for (int i = 1; i <= lastPageNumber; i++) {
+			URI uri = buildDetailPageURI(webToon.getId(), i + "");
+			downloadCount += saveByOnePage(uri, prePath + i + File.separator);
+
+			System.out.println(String.format("%d개. %.1f%% 완료되었습니다.", downloadCount, ((double) i / (double) lastPageNumber) * 100.0));
 		}
 
 		System.out.println("총 " + downloadCount + "개의파일이 다운로드 되었습니다.");
@@ -82,28 +91,37 @@ public class WebtoonDownloader {
 	 * @param path
 	 * @return
 	 * @throws Exception
-	 * @throws
 	 */
-	public int saveByPage(URI uri, String path) throws Exception {
-		String html = HttpClientUtils.readHtmlPage(uri);
-		List<String> imageUrlList = webtoonPage.selectImgByHtmlPage(html);
-		
-		DownloadFileInfo fileInfo = new DownloadFileInfo();
-		fileInfo.setRefererURL(uri.toString());
-		fileInfo.setPreSavePath(path);
-		
-		List<String> downloadFileNames = new ArrayList<String>();
-		for(String imageURL : imageUrlList) {
+	public int saveByOnePage(final URI uri, final String path) throws Exception {
+		List<String> imageUrlList = webtoonParser.selectImageUrlsBy(uri.toURL());
+
+		List<DownloadFileInfo> fileURLs = imageUrlList.stream().map(imageURL -> {
+			DownloadFileInfo fileInfo = new DownloadFileInfo(uri.toString(), path);
 			fileInfo.setDownloadURL(imageURL);
-			FileDownloadService.downloadFile(fileInfo);
-			downloadFileNames.add(fileInfo.getFileName());
-		}
-		
+			return fileInfo;
+		}).collect(Collectors.toList());
+
+		FileDownloadUtils.parallel(fileURLs, false);
+		writeViewer(imageUrlList, path);
+
+		return imageUrlList.size();
+	}
+
+	/**
+	 * viewer 파일을 생성합니다.
+	 * 
+	 * @param imageUrlList
+	 * @param savePath
+	 */
+	private void writeViewer(List<String> imageUrlList, String savePath) {
+		List<String> downloadFileNames = imageUrlList.stream().map(imageURL -> {
+			String[] depths = imageURL.split("/");
+			return depths[depths.length - 1];
+		}).collect(Collectors.toList());
+
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("fileNames", downloadFileNames);
-		viewer.write(model, new File(fileInfo.getPreSavePath(), "viewer.html"));
-		
-		return imageUrlList.size();
+		viewer.write(model, new File(savePath, "viewer.html"));
 	}
 
 	/**
@@ -115,17 +133,17 @@ public class WebtoonDownloader {
 	 */
 	public Webtoon getWebToonInfo(String title) throws Exception {
 		URI uri = buildWebtoonSearchPageURI(title);
-		String htmlString = HttpClientUtils.readHtmlPage(uri);
+		String htmlString = HttpClientUtils.read(uri);
 
-		Webtoon webtoon = webtoonPage.getWebToonInfo(htmlString);
+		Webtoon webtoon = webtoonParser.getWebToonInfo(htmlString);
 		if (Webtoon.emptyObject.equals(webtoon)) {
-			System.out.println("검색 결과가 없습니다.");
+			logger.info("검색 결과가 없습니다.");
 			return Webtoon.emptyObject;
 		}
 
 		int lastPage = getLastPageNumber(webtoon.getId());
 		if (lastPage <= 0) {
-			System.out.println("접속이 차단되었습니다.");
+			logger.info("접속이 차단되었습니다.");
 			return Webtoon.emptyObject;
 		}
 		webtoon.setLastPage(lastPage);
@@ -136,17 +154,17 @@ public class WebtoonDownloader {
 	/**
 	 * 웹툰의 마지막화 번호를 반환합니다.
 	 * 
-	 * http://comic.naver.com/webtoon/detail.nhn?titleId=316912&no=188
-	 * no 파라미터에 유효한 숫자를 넘기지 않으면 마지막화 페이지로 이동한다.
+	 * http://comic.naver.com/webtoon/detail.nhn?titleId=316912&no=188 no 파라미터에
+	 * 유효한 숫자를 넘기지 않으면 마지막화 페이지로 이동한다.
 	 * 
 	 * @param titleid
 	 * @return
 	 * @throws Exception
 	 */
 	public int getLastPageNumber(String titleid) throws Exception {
-		URI uri = buildWebtoonDetailPageURI(titleid, 0 + "");
-		String htmlString = HttpClientUtils.readHtmlPage(uri);
-		
-		return webtoonPage.getLastPageNumber(htmlString);
+		URI uri = buildDetailPageURI(titleid, 0 + "");
+		String htmlString = HttpClientUtils.read(uri);
+
+		return webtoonParser.getLastPageNumber(htmlString);
 	}
 }

@@ -5,29 +5,17 @@ import java.io.File;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class DownloadFileInfo {
-	private String name;
-
 	private String refererURL;
-
 	private String downloadURL;
-	
 	private String preSavePath;
 
 	public DownloadFileInfo() {
 
 	}
 
-	public DownloadFileInfo(String refererURL, String downloadURL) {
+	public DownloadFileInfo(String refererURL, String preSavePath) {
 		this.refererURL = refererURL;
-		this.downloadURL = downloadURL;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+		this.preSavePath = preSavePath;
 	}
 
 	public String getRefererURL() {
@@ -46,11 +34,6 @@ public class DownloadFileInfo {
 		this.downloadURL = downloadURL;
 	}
 
-	public String getFileName() {
-		String[] depths = downloadURL.split("/");
-		return depths[depths.length - 1];
-	}
-	
 	public String getPreSavePath() {
 		return preSavePath;
 	}
@@ -59,11 +42,15 @@ public class DownloadFileInfo {
 		this.preSavePath = preSavePath;
 	}
 
+	public String getFileName() {
+		String[] depths = downloadURL.split("/");
+		return depths[depths.length - 1];
+	}
+
 	public File getSaveFileInfo() {
 		return new File(this.preSavePath, this.getFileName());
 	}
 
-	
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
