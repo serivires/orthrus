@@ -24,13 +24,14 @@ public class WebtoonParser {
 	 * 
 	 * @param htmlString
 	 * @return
+	 * @throws IOException
 	 * @throws Exception
 	 */
-	public int getLastPageNumber(String htmlString) {
-		Document doc = Jsoup.parse(htmlString);
-		String url = doc.select("head meta[property=og:url]").first().attr("abs:content");
+	public int getLastPageNumber(URL url) throws IOException {
+		Document doc = Jsoup.parse(url, 5000);
+		String lastPageURL = doc.select("head meta[property=og:url]").first().attr("abs:content");
+		String pageNumber = lastPageURL.substring(lastPageURL.indexOf("no=")).replace("no=", "");
 
-		String pageNumber = url.substring(url.indexOf("no=")).replace("no=", "");
 		return Integer.parseInt(pageNumber);
 	}
 
@@ -47,11 +48,12 @@ public class WebtoonParser {
 	/**
 	 * 웹툰 이름으로 검색된 결과의 첫번째 항목에 대한 정보를 반환합니다.
 	 * 
-	 * @param HtmlString
+	 * @param url
 	 * @return Webtoon
+	 * @throws IOException
 	 */
-	public Webtoon getWebToonInfo(String HtmlString) {
-		Document doc = Jsoup.parse(HtmlString);
+	public Webtoon getWebToonInfo(URL url) throws IOException {
+		Document doc = Jsoup.parse(url, 5000);
 		Elements elements = doc.select(".resultList li");
 
 		if (elements.isEmpty() == true) {
@@ -71,8 +73,8 @@ public class WebtoonParser {
 	/**
 	 * 한 페이지 내에 있는 유효한 이미지 파일 주소 목록을 반환합니다.
 	 * 
-	 * @param doc
-	 * @return
+	 * @param url
+	 * @return List<String>
 	 * @throws IOException
 	 */
 	public List<String> selectImageUrlsBy(URL url) throws IOException {

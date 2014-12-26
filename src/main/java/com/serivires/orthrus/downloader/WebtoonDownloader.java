@@ -12,7 +12,6 @@ import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.serivires.orthrus.commons.HttpClientUtils;
 import com.serivires.orthrus.model.DownloadFileInfo;
 import com.serivires.orthrus.model.Webtoon;
 import com.serivires.orthrus.parse.WebtoonParser;
@@ -133,9 +132,8 @@ public class WebtoonDownloader {
 	 */
 	public Webtoon getWebToonInfo(String title) throws Exception {
 		URI uri = buildWebtoonSearchPageURI(title);
-		String htmlString = HttpClientUtils.read(uri);
+		Webtoon webtoon = webtoonParser.getWebToonInfo(uri.toURL());
 
-		Webtoon webtoon = webtoonParser.getWebToonInfo(htmlString);
 		if (Webtoon.emptyObject.equals(webtoon)) {
 			logger.info("검색 결과가 없습니다.");
 			return Webtoon.emptyObject;
@@ -163,8 +161,6 @@ public class WebtoonDownloader {
 	 */
 	public int getLastPageNumber(String titleid) throws Exception {
 		URI uri = buildDetailPageURI(titleid, 0 + "");
-		String htmlString = HttpClientUtils.read(uri);
-
-		return webtoonParser.getLastPageNumber(htmlString);
+		return webtoonParser.getLastPageNumber(uri.toURL());
 	}
 }

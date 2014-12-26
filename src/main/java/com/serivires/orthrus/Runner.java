@@ -1,7 +1,5 @@
 package com.serivires.orthrus;
 
-import java.time.Clock;
-
 import com.serivires.orthrus.downloader.WebtoonDownloader;
 
 public class Runner {
@@ -13,13 +11,8 @@ public class Runner {
 
 		String title = args[0];
 
-		Clock clock = Clock.systemDefaultZone();
-		long time = clock.millis();
-
 		WebtoonDownloader downloader = new WebtoonDownloader();
 		downloader.autoSave(title);
-
-		System.out.println(clock.millis() - time);
 	}
 
 	public static boolean isEmptyBy(String[] array) {
