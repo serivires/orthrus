@@ -10,12 +10,12 @@ import org.junit.Test;
 
 public class WebtoonDownloaderTest {
 	WebtoonDownloader webtoonDownload;
-	
+
 	@Before
 	public void setup() throws Exception {
 		webtoonDownload = new WebtoonDownloader();
 	}
-	
+
 	@Test
 	public void buildWebtoonDetailPageURITest() throws Exception {
 		// given

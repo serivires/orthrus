@@ -12,6 +12,8 @@ public class Runner {
 		String title = args[0];
 
 		WebtoonDownloader downloader = new WebtoonDownloader();
+
+		// TODO: 검색된 목록을 보여주고 선택 가능하도록 변경 or GUI 도입?
 		downloader.autoSave(title);
 	}
 
