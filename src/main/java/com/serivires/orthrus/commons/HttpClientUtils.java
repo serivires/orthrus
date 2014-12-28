@@ -13,38 +13,44 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HttpClientUtils {
-	private static Logger logger = LoggerFactory.getLogger(HttpClientUtils.class);
+  private static Logger logger = LoggerFactory.getLogger(HttpClientUtils.class);
 
-	private HttpClientUtils() {
-		new AssertionError();
-	}
+  private HttpClientUtils() {
+    new AssertionError();
+  }
 
-	public static String read(URI uri) {
-		CloseableHttpClient httpclient = HttpClientBuilder.create().build();
-		String htmlString = null;
+  /**
+   * 해당 주소 페이지를 문자열로 반환합니다.
+   * 
+   * @param uri
+   * @return
+   */
+  public static String read(URI uri) {
+    CloseableHttpClient httpclient = HttpClientBuilder.create().build();
+    String htmlString = null;
 
-		try {
-			HttpGet httpget = new HttpGet(uri);
-			CloseableHttpResponse response = httpclient.execute(httpget);
+    try {
+      HttpGet httpget = new HttpGet(uri);
+      CloseableHttpResponse response = httpclient.execute(httpget);
 
-			try {
-				HttpEntity httpEntity = response.getEntity();
-				InputStream inputStream = httpEntity.getContent();
-				htmlString = IOUtils.toString(inputStream, "utf-8");
+      try {
+        HttpEntity httpEntity = response.getEntity();
+        InputStream inputStream = httpEntity.getContent();
+        htmlString = IOUtils.toString(inputStream, "utf-8");
 
-				logger.info(httpget.getURI().toString());
-				logger.info(response.getStatusLine().toString());
-			} catch (Exception e) {
-				throw e;
-			} finally {
-				response.close();
-				httpclient.close();
-			}
-		} catch (Exception e) {
-			logger.error("readHtmlPage(): {}", e.toString());
-			e.printStackTrace();
-		}
+        logger.info(httpget.getURI().toString());
+        logger.info(response.getStatusLine().toString());
+      } catch (Exception e) {
+        throw e;
+      } finally {
+        response.close();
+        httpclient.close();
+      }
+    } catch (Exception e) {
+      logger.error("readHtmlPage(): {}", e.toString());
+      e.printStackTrace();
+    }
 
-		return htmlString;
-	}
+    return htmlString;
+  }
 }

@@ -11,24 +11,25 @@ import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 public class DefaultViewer {
-	private final VelocityEngine velocityEngine;
+  private final VelocityEngine velocityEngine;
 
-	public DefaultViewer() throws Exception {
-		velocityEngine = new VelocityEngine();
-		velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
-		velocityEngine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
-		velocityEngine.init();
-	}
+  public DefaultViewer() throws Exception {
+    velocityEngine = new VelocityEngine();
+    velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+    velocityEngine.setProperty("classpath.resource.loader.class",
+        ClasspathResourceLoader.class.getName());
+    velocityEngine.init();
+  }
 
-	public void write(Map<String, Object> model, File file) {
-		StringWriter stringWriter = new StringWriter();
-		VelocityContext context = new VelocityContext(model);
+  public void write(Map<String, Object> model, File file) {
+    StringWriter stringWriter = new StringWriter();
+    VelocityContext context = new VelocityContext(model);
 
-		try {
-			velocityEngine.mergeTemplate("velocity/defaultView.vm", context, stringWriter);
-			FileUtils.write(file, stringWriter.toString());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    try {
+      velocityEngine.mergeTemplate("velocity/defaultView.vm", context, stringWriter);
+      FileUtils.write(file, stringWriter.toString());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 }

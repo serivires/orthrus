@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <style type="text/css">
-	img { display: block; margin-left: auto; margin-right: auto; }
+    img { display: block; margin-left: auto; margin-right: auto; }
 </style>
 
 <title></title>
 </head>
 
 <body>
-	#foreach($fileName in $fileNames)
-		<img src="$fileName">
-	#end
+    #foreach($fileName in $fileNames)
+        <img src="$fileName">
+    #end
 </body>
 </html>

@@ -16,57 +16,64 @@ import org.slf4j.LoggerFactory;
 
 import com.serivires.orthrus.model.DownloadFileInfo;
 
+
 public class FileDownloadUtils {
-	private static Logger logger = LoggerFactory.getLogger(FileDownloadUtils.class);
+  private static Logger logger = LoggerFactory.getLogger(FileDownloadUtils.class);
 
-	public static boolean get(DownloadFileInfo fileURL) {
-		CloseableHttpClient httpclient = HttpClientBuilder.create().build();
+  /**
+   * 해당 페이지를 문자열로 반환합니다.
+   * 
+   * @param fileUrl
+   * @return
+   */
+  public static boolean get(DownloadFileInfo fileUrl) {
+    CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
-		try {
-			HttpGet httpget = new HttpGet(fileURL.getDownloadURL());
-			httpget.setHeader("Referer", fileURL.getRefererURL());
-			CloseableHttpResponse response = httpclient.execute(httpget);
+    try {
+      HttpGet httpget = new HttpGet(fileUrl.getDownloadUrl());
+      httpget.setHeader("Referer", fileUrl.getRefererUrl());
+      CloseableHttpResponse response = httpclient.execute(httpget);
 
-			try {
-				HttpEntity httpEntity = response.getEntity();
-				InputStream inputStream = httpEntity.getContent();
-				FileUtils.copyInputStreamToFile(inputStream, fileURL.getSaveFileInfo());
+      try {
+        HttpEntity httpEntity = response.getEntity();
+        InputStream inputStream = httpEntity.getContent();
+        FileUtils.copyInputStreamToFile(inputStream, fileUrl.getSaveFileInfo());
 
-				logger.info("FileName: {}", fileURL.getFileName());
-			} catch (Exception e) {
-				throw e;
-			} finally {
-				response.close();
-				httpclient.close();
-			}
-		} catch (Exception e) {
-			logger.error("FileDownloadUtils::get {}", e.toString());
-			return false;
-		}
+        logger.info("FileName: {}", fileUrl.getFileName());
+      } catch (Exception e) {
+        throw e;
+      } finally {
+        response.close();
+        httpclient.close();
+      }
+    } catch (Exception e) {
+      logger.error("FileDownloadUtils::get {}", e.toString());
+      return false;
+    }
 
-		return true;
-	}
+    return true;
+  }
 
-	/**
-	 * 파일을 병렬 다운로드 합니다.
-	 * 
-	 * @param fileURLs
-	 * @param isAsync
-	 * @return
-	 */
-	public static ForkJoinPool parallel(List<DownloadFileInfo> fileURLs, boolean isAsync) {
-		ForkJoinPool pool = new ForkJoinPool(5);
-		fileURLs.forEach(fileURL -> pool.execute(() -> get(fileURL)));
-		pool.shutdown();
+  /**
+   * 파일을 병렬 다운로드 합니다.
+   * 
+   * @param fileUrlList
+   * @param isAsync
+   * @return
+   */
+  public static ForkJoinPool parallel(List<DownloadFileInfo> fileUrlList, boolean isAsync) {
+    ForkJoinPool pool = new ForkJoinPool(5);
+    fileUrlList.forEach(fileURL -> pool.execute(() -> get(fileURL)));
+    pool.shutdown();
 
-		if (isAsync == false) {
-			try {
-				pool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+    if (isAsync == false) {
+      try {
+        pool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
 
-		return pool;
-	}
+    return pool;
+  }
 }
