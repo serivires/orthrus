@@ -22,9 +22,16 @@ public class Runner {
     WebtoonDownloader downloader = new WebtoonDownloader();
 
     // TODO: 검색된 목록을 보여주고 선택 가능하도록 변경 or GUI 도입?
+    // TODO: javaFX 도입 검토
     downloader.autoSave(title);
   }
 
+  /**
+   * 파라미터를 검증합니다.
+   * 
+   * @param String[]
+   * @return boolean
+   */
   public static boolean isEmptyBy(String[] array) {
     return (array == null || array.length == 0);
   }

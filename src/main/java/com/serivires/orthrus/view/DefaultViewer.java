@@ -13,6 +13,11 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 public class DefaultViewer {
   private final VelocityEngine velocityEngine;
 
+  /**
+   * VelocityEngine을 초기화합니다.
+   * 
+   * @throws Exception
+   */
   public DefaultViewer() throws Exception {
     velocityEngine = new VelocityEngine();
     velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
@@ -21,6 +26,12 @@ public class DefaultViewer {
     velocityEngine.init();
   }
 
+  /**
+   * defaultView.vm에 정보를 입력하여 viewer파일을 생성합니다.
+   * 
+   * @param model
+   * @param file
+   */
   public void write(Map<String, Object> model, File file) {
     StringWriter stringWriter = new StringWriter();
     VelocityContext context = new VelocityContext(model);
