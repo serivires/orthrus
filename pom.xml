@@ -2,16 +2,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.serivires.orthrus</groupId>
 	<artifactId>orthrus</artifactId>
-	<version>1.1.0</version>
+	<version>1.2.0</version>
 
 	<properties>
 		<!-- Generic properties -->
 		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-		<!-- Spring -->
-		<spring-framework.version>3.2.3.RELEASE</spring-framework.version>
 
 		<!-- Logging -->
 		<logback.version>1.0.13</logback.version>
@@ -22,23 +19,6 @@
 	</properties>
 	
 	<dependencies>
-		<!-- Spring and Transactions -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>${spring-framework.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-tx</artifactId>
-			<version>${spring-framework.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context-support</artifactId>
-			<version>${spring-framework.version}</version>
-		</dependency>
-
 		<!-- Logging with SLF4J & LogBack -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -57,12 +37,6 @@
 		
 		<!-- Test Artifacts -->
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${spring-framework.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
@@ -70,11 +44,6 @@
 		</dependency>
 
 		<!-- commons -->
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>1.8</version>
-		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
