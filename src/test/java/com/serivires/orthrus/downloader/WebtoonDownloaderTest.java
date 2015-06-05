@@ -27,7 +27,7 @@ public class WebtoonDownloaderTest {
 
     // then
     assertThat(resultUri.getPath(), is("/webtoon/detail.nhn"));
-    assertThat(resultUri.getQuery(), is("titleId=신의+탑&no=1"));
+    assertThat(resultUri.getQuery(), is("titleId=신의 탑&no=1"));
   }
 
   @Test
@@ -39,7 +39,7 @@ public class WebtoonDownloaderTest {
     URI resultUri = webtoonDownload.buildWebtoonSearchPageUri(title);
 
     // then
-    assertThat(resultUri.getPath(), is("/search.nhn"));
-    assertThat(resultUri.getQuery(), is("m=webtoon&type=title&keyword=신의+탑"));
+    assertThat(resultUri.getPath(), is("/webtoon/search.nhn"));
+    assertThat(resultUri.getQuery(), is("m=webtoon&type=title&keyword=신의 탑"));
   }
 }
