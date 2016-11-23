@@ -14,20 +14,19 @@ public class DefaultViewer {
   private final VelocityEngine velocityEngine;
 
   /**
-   * VelocityEngine을 초기화합니다.
+   * VelocityEngine 초기화
    * 
    * @throws Exception
    */
   public DefaultViewer() throws Exception {
     velocityEngine = new VelocityEngine();
     velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
-    velocityEngine.setProperty("classpath.resource.loader.class",
-        ClasspathResourceLoader.class.getName());
+    velocityEngine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
     velocityEngine.init();
   }
 
   /**
-   * defaultView.vm에 정보를 입력하여 viewer파일을 생성합니다.
+   * defaultView.vm에 정보를 입력하여 viewer 파일을 생성합니다.
    * 
    * @param model
    * @param file

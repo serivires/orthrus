@@ -22,9 +22,8 @@ public class FileDownloadUtils {
 
   /**
    * 단일 파일을 다운로드 합니다.
-   * 
-   * @param fileInfo
-   * @return boolean
+   *
+   * @param fileInfo:
    */
   private static void write(DownloadFileInfo fileInfo) {
     restTemplate.execute(fileInfo.getDownloadUrl(), HttpMethod.GET, (req) -> {
@@ -42,11 +41,9 @@ public class FileDownloadUtils {
   /**
    * 파일을 병렬 다운로드 합니다.
    * 
-   * @param fileInfos
-   * @param isAsync
-   * @return
+   * @param fileInfos:
    */
   public static void parallel(List<DownloadFileInfo> fileInfos) {
-    fileInfos.parallelStream().forEach(fileInfo -> write(fileInfo));
+    fileInfos.parallelStream().forEach(FileDownloadUtils::write);
   }
 }

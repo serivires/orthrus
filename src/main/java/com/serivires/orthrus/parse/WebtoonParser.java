@@ -3,6 +3,7 @@ package com.serivires.orthrus.parse;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -15,29 +16,36 @@ import com.serivires.orthrus.model.Webtoon;
 
 public class WebtoonParser {
 
+  private Optional<Document> parse(URL url, int timeoutMillis) {
+    try {
+      return Optional.ofNullable(Jsoup.parse(url, timeoutMillis));
+    } catch (IOException e) {
+      return Optional.empty();
+    }
+  }
+
   /**
    * 해당 페이지에 있는 현재 페이지 숫자 정보를 반환합니다.
    * 
    * http://comic.naver.com/webtoon/detail.nhn?titleId=316912&no=188 <meta property="og:url"
    * content= "http://comic.naver.com/webtoon/detail.nhn?titleId=316912&amp;no=188">
-   * 
-   * @param htmlString
-   * @return
-   * @throws IOException
-   * @throws Exception
+   *
+   * @param url:
+   * @return int
    */
-  public int getLastPageNumber(URL url) throws IOException {
-    Document doc = Jsoup.parse(url, 5000);
+  public int getLastPageNumber(URL url) {
+    Optional<Document> document = parse(url, 5000);
+    Document doc = document.orElseThrow(IllegalArgumentException::new);
+
     String lastPageUrl = doc.select("head meta[property=og:url]").first().attr("abs:content");
     String pageNumber = lastPageUrl.substring(lastPageUrl.indexOf("no=")).replace("no=", "");
-
-    return Integer.parseInt(pageNumber);
+    return Integer.valueOf(pageNumber);
   }
 
   /**
    * url에서 웹툰 고유 ID를 반환합니다.
    * 
-   * @param url
+   * @param url:
    * @return String
    */
   private String getIdBy(String url) {
@@ -48,16 +56,15 @@ public class WebtoonParser {
   /**
    * 웹툰 이름으로 검색된 결과의 첫번째 항목에 대한 정보를 반환합니다.
    * 
-   * @param url
+   * @param url:
    * @return Webtoon
-   * @throws IOException
    */
-  public Webtoon getWebToonInfo(URL url) throws IOException {
-    Document doc = Jsoup.parse(url, 5000);
-    Elements elements = doc.select(".resultList li");
+  public Webtoon getWebtoonInfo(URL url) {
+    Optional<Document> document = parse(url, 5000);
+    Elements elements = document.orElseThrow(IllegalArgumentException::new).select(".resultList li");
 
-    if (elements.isEmpty() == true) {
-      return Webtoon.emptyObject;
+    if (elements.isEmpty()) {
+      return Webtoon.empty;
     }
 
     Element element = elements.select("h5 a").first();
@@ -73,17 +80,17 @@ public class WebtoonParser {
   /**
    * 한 페이지 내에 있는 유효한 이미지 파일 주소 목록을 반환합니다.
    * 
-   * @param url
+   * @param url:
    * @return List<String>
-   * @throws IOException
+   * @throws IOException:
    */
   public List<String> selectImageUrlsBy(URL url) throws IOException {
     Document doc = Jsoup.parse(url, 5000);
-    List<Element> elements = (List<Element>) doc.select(".wt_viewer img");
+    List<Element> elements = doc.select(".wt_viewer img");
 
-    return elements.stream().map(element -> element.attr("src")) //
-        .filter(src -> StringUtils.isNotBlank(src)) //
-        .filter(src -> !StringUtils.contains(src, "txt_ads.png")) // 광고이미지
+    return elements.stream().map(element -> element.attr("src"))
+        .filter(StringUtils::isNotBlank)
+        .filter(src -> !StringUtils.contains(src, "txt_ads.png"))
         .collect(Collectors.toList());
   }
 }

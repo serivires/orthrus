@@ -4,41 +4,22 @@ import java.io.File;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+@Data
+@ToString
+@EqualsAndHashCode
+@NoArgsConstructor
 public class DownloadFileInfo {
   private String refererUrl;
   private String downloadUrl;
   private String preSavePath;
 
-  public DownloadFileInfo() {
-
-  }
-
   public DownloadFileInfo(String refererUrl, String preSavePath) {
     this.refererUrl = refererUrl;
-    this.preSavePath = preSavePath;
-  }
-
-  public String getRefererUrl() {
-    return refererUrl;
-  }
-
-  public void setRefererUrl(String refererUrl) {
-    this.refererUrl = refererUrl;
-  }
-
-  public String getDownloadUrl() {
-    return downloadUrl;
-  }
-
-  public void setDownloadUrl(String downloadUrl) {
-    this.downloadUrl = downloadUrl;
-  }
-
-  public String getPreSavePath() {
-    return preSavePath;
-  }
-
-  public void setPreSavePath(String preSavePath) {
     this.preSavePath = preSavePath;
   }
 
@@ -49,10 +30,5 @@ public class DownloadFileInfo {
 
   public File getSaveFileInfo() {
     return new File(this.preSavePath, this.getFileName());
-  }
-
-  @Override
-  public String toString() {
-    return ToStringBuilder.reflectionToString(this);
   }
 }

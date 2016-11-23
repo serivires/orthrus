@@ -8,8 +8,8 @@ public class Runner {
    * 
    * 현재는 네이버 웹툰만 지원합니다.
    * 
-   * @param title
-   * @throws Exception
+   * @param args:
+   * @throws Exception:
    */
   public static void main(String[] args) throws Exception {
     if (isEmptyBy(args)) {
