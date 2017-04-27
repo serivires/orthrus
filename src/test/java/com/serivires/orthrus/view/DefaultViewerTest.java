@@ -1,12 +1,11 @@
 package com.serivires.orthrus.view;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DefaultViewerTest {
   private DefaultViewer defaultViewer;

@@ -1,13 +1,11 @@
 package com.serivires.orthrus.model;
 
-import java.io.File;
-
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import java.io.File;
 
 @Data
 @ToString

@@ -1,12 +1,12 @@
 package com.serivires.orthrus.downloader;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.net.URI;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class WebtoonDownloaderTest {
   WebtoonDownloader webtoonDownload;
