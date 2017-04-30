@@ -9,37 +9,34 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class WebtoonDownloaderTest {
-  WebtoonDownloader webtoonDownload;
+    WebtoonDownloader webtoonDownload;
 
-  @Before
-  public void setup() throws Exception {
-    webtoonDownload = new WebtoonDownloader();
-  }
+    @Before public void setup() throws Exception {
+        webtoonDownload = new WebtoonDownloader();
+    }
 
-  @Test
-  public void buildWebtoonDetailPageURITest() throws Exception {
-    // given
-    String title = "신의 탑";
-    String no = "1";
+    @Test public void buildWebtoonDetailPageURITest() throws Exception {
+        // given
+        String title = "신의 탑";
+        String no = "1";
 
-    // when
-    URI resultUri = webtoonDownload.buildDetailPageUri(title, no);
+        // when
+        URI resultUri = webtoonDownload.buildDetailPageUri(title, no);
 
-    // then
-    assertThat(resultUri.getPath(), is("/webtoon/detail.nhn"));
-    assertThat(resultUri.getQuery(), is("titleId=신의 탑&no=1"));
-  }
+        // then
+        assertThat(resultUri.getPath(), is("/webtoon/detail.nhn"));
+        assertThat(resultUri.getQuery(), is("titleId=신의 탑&no=1"));
+    }
 
-  @Test
-  public void buildWebtoonSearchPageURITest() throws Exception {
-    // given
-    String title = "신의 탑";
+    @Test public void buildWebtoonSearchPageURITest() throws Exception {
+        // given
+        String title = "신의 탑";
 
-    // when
-    URI resultUri = webtoonDownload.buildWebtoonSearchPageUri(title);
+        // when
+        URI resultUri = webtoonDownload.buildWebtoonSearchPageUri(title);
 
-    // then
-    assertThat(resultUri.getPath(), is("/webtoon/search.nhn"));
-    assertThat(resultUri.getQuery(), is("m=webtoon&type=title&keyword=신의 탑"));
-  }
+        // then
+        assertThat(resultUri.getPath(), is("/webtoon/search.nhn"));
+        assertThat(resultUri.getQuery(), is("m=webtoon&type=title&keyword=신의 탑"));
+    }
 }

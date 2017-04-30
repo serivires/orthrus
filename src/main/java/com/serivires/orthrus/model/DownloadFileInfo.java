@@ -6,27 +6,29 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-@Data
-@ToString
-@EqualsAndHashCode
-@NoArgsConstructor
-public class DownloadFileInfo {
-  private String refererUrl;
-  private String downloadUrl;
-  private String preSavePath;
+@Data @ToString @EqualsAndHashCode @NoArgsConstructor public class DownloadFileInfo {
+    private String refererUrl;
+    private String downloadUrl;
+    private String preSavePath;
 
-  public DownloadFileInfo(String refererUrl, String preSavePath) {
-    this.refererUrl = refererUrl;
-    this.preSavePath = preSavePath;
-  }
+    public DownloadFileInfo(String refererUrl, String preSavePath) {
+        this.refererUrl = refererUrl;
+        this.preSavePath = preSavePath;
+    }
 
-  public String getFileName() {
-    String[] depths = downloadUrl.split("/");
-    return depths[depths.length - 1];
-  }
+    public String getFileName() {
+        String[] depths = downloadUrl.split("/");
+        return depths[depths.length - 1];
+    }
 
-  public File getSaveFileInfo() {
-    return new File(this.preSavePath, this.getFileName());
-  }
+    public Path getPath() {
+        return Paths.get(getPreSavePath() + getFileName());
+    }
+
+    public File getSaveFileInfo() {
+        return new File(this.preSavePath, this.getFileName());
+    }
 }
