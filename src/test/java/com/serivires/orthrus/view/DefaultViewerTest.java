@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DefaultViewerTest {
@@ -15,7 +16,7 @@ public class DefaultViewerTest {
     }
 
     @Test public void writeTest() {
-        Map<String, Object> model = new HashMap<String, Object>();
+        Map<String, Object> model = new HashMap<>();
         File file = new File("test.html");
         defaultViewer.write(model, file);
     }

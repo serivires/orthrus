@@ -19,7 +19,7 @@ import java.nio.file.Paths;
         this.preSavePath = preSavePath;
     }
 
-    public String getFileName() {
+    private String getFileName() {
         String[] depths = downloadUrl.split("/");
         return depths[depths.length - 1];
     }

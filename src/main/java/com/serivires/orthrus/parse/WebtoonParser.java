@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class WebtoonParser {
 
-    private Optional<Document> parse(URL url, int timeoutMillis) {
+    private Optional<Document> parse(final URL url, final int timeoutMillis) {
         try {
             return Optional.ofNullable(Jsoup.parse(url, timeoutMillis));
         } catch (IOException e) {
@@ -32,12 +32,12 @@ public class WebtoonParser {
      * @param url:
      * @return int
      */
-    public int getLastPageNumber(URL url) {
-        Optional<Document> document = parse(url, 5000);
-        Document doc = document.orElseThrow(IllegalArgumentException::new);
+    public int getLastPageNumber(final URL url) {
+        final Optional<Document> document = parse(url, 5000);
+        final Document doc = document.orElseThrow(IllegalArgumentException::new);
 
-        String lastPageUrl = doc.select("head meta[property=og:url]").first().attr("abs:content");
-        String pageNumber = lastPageUrl.substring(lastPageUrl.indexOf("no=")).replace("no=", "");
+        final String lastPageUrl = doc.select("head meta[property=og:url]").first().attr("abs:content");
+        final String pageNumber = lastPageUrl.substring(lastPageUrl.indexOf("no=")).replace("no=", "");
         return Integer.valueOf(pageNumber);
     }
 
@@ -47,8 +47,8 @@ public class WebtoonParser {
      * @param url:
      * @return String
      */
-    private String getIdBy(String url) {
-        int startIndex = url.indexOf("titleId=");
+    private String getIdBy(final String url) {
+        final int startIndex = url.indexOf("titleId=");
         return url.substring(startIndex).replace("titleId=", "");
     }
 
@@ -58,19 +58,19 @@ public class WebtoonParser {
      * @param url:
      * @return Webtoon
      */
-    public Optional<Webtoon> getWebtoonInfo(URL url) {
-        Optional<Document> document = parse(url, 5000);
-        Elements elements =
-            document.orElseThrow(IllegalArgumentException::new).select(".resultList li");
+    public Optional<Webtoon> getWebtoonInfo(final URL url) {
+        final Optional<Document> rawDocument = parse(url, 5000);
+        final Elements elements =
+            rawDocument.orElseThrow(IllegalArgumentException::new).select(".resultList li");
 
         if (elements.isEmpty()) {
             return Optional.empty();
         }
 
-        Element element = elements.select("h5 a").first();
-        String urlPath = element.attr("href");
+        final Element element = elements.select("h5 a").first();
+        final String urlPath = element.attr("href");
 
-        Webtoon webToon = new Webtoon();
+        final Webtoon webToon = new Webtoon();
         webToon.setId(getIdBy(urlPath));
         webToon.setTitle(element.html());
 
@@ -84,11 +84,14 @@ public class WebtoonParser {
      * @return List<String>
      * @throws IOException:
      */
-    public List<String> selectImageUrlsBy(URL url) throws IOException {
-        Document doc = Jsoup.parse(url, 5000);
-        List<Element> elements = doc.select(".wt_viewer img");
+    public List<String> selectImageUrlsBy(final URL url) throws IOException {
+        final Document doc = Jsoup.parse(url, 5000);
+        final List<Element> elements = doc.select(".wt_viewer img");
 
-        return elements.stream().map(element -> element.attr("src")).filter(StringUtils::isNotBlank)
-            .filter(src -> !StringUtils.contains(src, "txt_ads.png")).collect(Collectors.toList());
+        return elements.stream()
+            .map(element -> element.attr("src"))
+            .filter(StringUtils::isNotBlank)
+            .filter(src -> !StringUtils.contains(src, "txt_ads.png"))
+            .collect(Collectors.toList());
     }
 }

@@ -1,6 +1,7 @@
 package com.serivires.orthrus;
 
 import com.serivires.orthrus.downloader.WebtoonDownloader;
+import org.apache.commons.lang3.ArrayUtils;
 
 public class Runner {
     /**
@@ -12,27 +13,17 @@ public class Runner {
      * @throws Exception:
      */
     public static void main(String[] args) throws Exception {
-        if (isEmptyBy(args)) {
+        if (ArrayUtils.isEmpty(args)) {
             System.out.println("제목을 올바르게 입력해 주세요.");
             return;
         }
 
-        String title = args[0];
+        final String title = args[0];
 
         WebtoonDownloader downloader = new WebtoonDownloader();
 
         // TODO: 검색된 목록을 보여주고 선택 가능하도록 변경 or GUI 도입?
         // TODO: javaFX 도입 검토
         downloader.autoSave(title);
-    }
-
-    /**
-     * 파라미터를 검증합니다.
-     *
-     * @param String[]
-     * @return boolean
-     */
-    public static boolean isEmptyBy(String[] array) {
-        return (array == null || array.length == 0);
     }
 }

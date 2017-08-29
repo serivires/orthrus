@@ -11,10 +11,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class WebtoonDownloader {
@@ -48,9 +45,11 @@ public class WebtoonDownloader {
      * @throws URISyntaxException
      */
     protected URI buildWebtoonSearchPageUri(String title) {
-        return UriComponentsBuilder.fromHttpUrl("http://comic.naver.com").path("webtoon/search.nhn")
-            .queryParam("m", "webtoon").queryParam("type", "title").queryParam("keyword", title)
-            .build().toUri();
+        return UriComponentsBuilder
+                .fromHttpUrl("http://comic.naver.com")
+                .path("search.nhn")
+                .queryParam("keyword", title)
+                .build().toUri();
     }
 
     /**
@@ -60,13 +59,13 @@ public class WebtoonDownloader {
      * @throws Exception:
      */
     public void autoSave(String title) throws Exception {
-        Optional<Webtoon> webtoonInfo = getWebtoonInfo(title);
-        if (!webtoonInfo.isPresent()) {
+        Optional<Webtoon> rawCartoonInfo = getWebtoonInfo(title);
+        if (!rawCartoonInfo.isPresent()) {
             return;
         }
 
         int downloadCount = 0;
-        Webtoon webtoon = webtoonInfo.get();
+        final Webtoon webtoon = rawCartoonInfo.get();
         int lastPageNumber = webtoon.getLastPage();
         String prePath =
             String.format("%s\\Desktop\\%s\\", System.getProperty("user.home"), webtoon.getTitle());
@@ -90,10 +89,10 @@ public class WebtoonDownloader {
      * @return int
      * @throws Exception:
      */
-    public int saveByOnePage(final URI uri, final String path) throws Exception {
-        List<String> imageUrlList = webtoonParser.selectImageUrlsBy(uri.toURL());
+    private int saveByOnePage(final URI uri, final String path) throws Exception {
+        final List<String> imageUrlList = webtoonParser.selectImageUrlsBy(uri.toURL());
 
-        List<DownloadFileInfo> fileUrlList = imageUrlList.parallelStream().map(imageURL -> {
+        final List<DownloadFileInfo> fileUrlList = imageUrlList.parallelStream().map(imageURL -> {
             DownloadFileInfo fileInfo = new DownloadFileInfo(uri.toString(), path);
             fileInfo.setDownloadUrl(imageURL);
             return fileInfo;
@@ -112,12 +111,12 @@ public class WebtoonDownloader {
      * @param savePath:
      */
     private void writeViewer(List<String> imageUrlList, String savePath) {
-        List<String> downloadFileNames = imageUrlList.stream().map(imageURL -> {
+        final List<String> downloadFileNames = imageUrlList.stream().map(imageURL -> {
             String[] depths = imageURL.split("/");
             return depths[depths.length - 1];
         }).collect(Collectors.toList());
 
-        Map<String, Object> model = new HashMap<>();
+        final Map<String, Object> model = new HashMap<>();
         model.put("fileNames", downloadFileNames);
         viewer.write(model, new File(savePath, "viewer.html"));
     }
@@ -130,15 +129,15 @@ public class WebtoonDownloader {
      * @throws Exception:
      */
     private Optional<Webtoon> getWebtoonInfo(String title) throws Exception {
-        URI uri = buildWebtoonSearchPageUri(title);
-        Optional<Webtoon> webtoonInfo = webtoonParser.getWebtoonInfo(uri.toURL());
+        final URI uri = buildWebtoonSearchPageUri(title);
+        final Optional<Webtoon> webtoonInfo = webtoonParser.getWebtoonInfo(uri.toURL());
 
         if (!webtoonInfo.isPresent()) {
             logger.info("검색 결과가 없습니다.");
             return webtoonInfo;
         }
 
-        Webtoon webtoon = webtoonInfo.get();
+        final Webtoon webtoon = webtoonInfo.get();
         int lastPage = getLastPageNumber(webtoon.getId());
         if (lastPage <= 0) {
             logger.info("접속이 차단되었습니다.");
@@ -160,7 +159,7 @@ public class WebtoonDownloader {
      * @throws Exception:
      */
     private int getLastPageNumber(String titleId) throws Exception {
-        URI uri = buildDetailPageUri(titleId, "0");
+        final URI uri = buildDetailPageUri(titleId, "0");
         return webtoonParser.getLastPageNumber(uri.toURL());
     }
 }

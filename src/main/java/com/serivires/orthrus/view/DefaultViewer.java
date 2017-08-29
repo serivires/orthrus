@@ -8,6 +8,7 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 import java.io.File;
 import java.io.StringWriter;
+import java.util.List;
 import java.util.Map;
 
 public class DefaultViewer {
@@ -16,7 +17,7 @@ public class DefaultViewer {
     /**
      * VelocityEngine 초기화
      *
-     * @throws Exception
+     * @throws Exception:
      */
     public DefaultViewer() throws Exception {
         velocityEngine = new VelocityEngine();
@@ -29,12 +30,12 @@ public class DefaultViewer {
     /**
      * defaultView.vm에 정보를 입력하여 viewer 파일을 생성합니다.
      *
-     * @param model
-     * @param file
+     * @param model:
+     * @param file:
      */
-    public void write(Map<String, Object> model, File file) {
-        StringWriter stringWriter = new StringWriter();
-        VelocityContext context = new VelocityContext(model);
+    public void write(final Map<String, Object> model, final File file) {
+        final StringWriter stringWriter = new StringWriter();
+        final VelocityContext context = new VelocityContext(model);
 
         try {
             velocityEngine.mergeTemplate("velocity/defaultView.vm", context, stringWriter);

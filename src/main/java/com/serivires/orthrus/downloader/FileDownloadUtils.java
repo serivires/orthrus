@@ -15,9 +15,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class FileDownloadUtils {
-    private static Logger logger = LoggerFactory.getLogger(FileDownloadUtils.class);
-    private static RestTemplate restTemplate = new RestTemplate();
-    private static String CHROME_USER_AGENT =
+    private static final Logger logger = LoggerFactory.getLogger(FileDownloadUtils.class);
+    private static final RestTemplate restTemplate = new RestTemplate();
+    private static final String CHROME_USER_AGENT =
         "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.81 Safari/537.36";
 
     /**
@@ -25,14 +25,14 @@ public class FileDownloadUtils {
      *
      * @param fileInfo:
      */
-    private static void write(DownloadFileInfo fileInfo) {
+    private static void write(final DownloadFileInfo fileInfo) {
         restTemplate.execute(fileInfo.getDownloadUrl(), HttpMethod.GET, (req) -> {
-            HttpHeaders httpHeaders = req.getHeaders();
+            final HttpHeaders httpHeaders = req.getHeaders();
             httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_OCTET_STREAM));
             httpHeaders.set(HttpHeaders.REFERER, fileInfo.getRefererUrl());
             httpHeaders.set(HttpHeaders.USER_AGENT, CHROME_USER_AGENT);
         }, (res) -> {
-            Path path = fileInfo.getPath();
+            final Path path = fileInfo.getPath();
             if (!Files.exists(path.getParent())) {
                 Files.createDirectories(path.getParent());
             }
@@ -48,7 +48,7 @@ public class FileDownloadUtils {
      *
      * @param files:
      */
-    public static void parallel(List<DownloadFileInfo> files) {
+    static void parallel(final List<DownloadFileInfo> files) {
         files.parallelStream().forEach(FileDownloadUtils::write);
     }
 }
