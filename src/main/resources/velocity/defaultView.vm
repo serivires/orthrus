@@ -13,13 +13,14 @@
 </head>
 
 <body>
+<content>
     #foreach($fileName in $fileNames)
-    <img src="$fileName">
+        <img src="$fileName">
     #end
+</content>
 <div style="text-align:center;font-size:40pt;margin-top:60px;margin-bottom:50px;">
-    <a id="before" href="javascript:void(0)"><span
-            style="margin-right:30px;">&lt;&lt;&lt;</span></a>
-    <a id="next" href="javascript:void(0)"> <span style="margin-left:30px;">&gt;&gt;&gt;</span></a>
+    <a id="before" href="javascript:void(0)" style="text-decoration:none"><span style="margin-right:30px;">&#9664;&#9664;</span></a>
+    <a id="next" href="javascript:void(0)" style="text-decoration:none"><span style="margin-left:30px;">&#9654;&#9654;</span></a>
 </div>
 <script>
     var page = getPageNumber();

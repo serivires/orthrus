@@ -20,6 +20,8 @@ import com.serivires.orthrus.view.DefaultViewer;
 public class WebtoonDownloader {
 	private static Logger logger = LoggerFactory.getLogger(WebtoonDownloader.class);
 
+	private static final String DEFAULT_SYSTEM_PATH = String.format("%s\\Desktop", System.getProperty("user.home"));
+
 	private final WebtoonParser webtoonParser;
 	private final DefaultViewer viewer;
 
@@ -51,7 +53,8 @@ public class WebtoonDownloader {
 			.fromHttpUrl("http://comic.naver.com")
 			.path("search.nhn")
 			.queryParam("keyword", title)
-			.build().toUri();
+			.build()
+			.toUri();
 	}
 
 	/**
@@ -62,15 +65,14 @@ public class WebtoonDownloader {
 	 */
 	public void autoSave(final String title) throws Exception {
 		final Optional<Webtoon> rawWebtoonInfo = getWebtoonInfo(title);
-		if (!rawWebtoonInfo.isPresent()) {
+		if (rawWebtoonInfo.isEmpty()) {
 			return;
 		}
 
 		int downloadCount = 0;
 		final Webtoon webtoon = rawWebtoonInfo.get();
 		int lastPageNumber = webtoon.getLastPage();
-		final String prePath =
-			String.format("%s\\Desktop\\%s\\", System.getProperty("user.home"), webtoon.getTitle());
+		final String prePath = String.format("%s\\%s\\", DEFAULT_SYSTEM_PATH, webtoon.getTitle());
 
 		for (int i = 1; i <= lastPageNumber; i++) {
 			final URI uri = buildDetailPageUri(webtoon.getId(), String.valueOf(i));
@@ -134,7 +136,7 @@ public class WebtoonDownloader {
 		final URI uri = buildWebtoonSearchPageUri(title);
 		final Optional<Webtoon> webtoonInfo = webtoonParser.getWebtoonInfo(uri.toURL());
 
-		if (!webtoonInfo.isPresent()) {
+		if (webtoonInfo.isEmpty()) {
 			logger.info("검색 결과가 없습니다.");
 			return webtoonInfo;
 		}
@@ -157,7 +159,7 @@ public class WebtoonDownloader {
 	 * - no 파라미터에 유효한 숫자를 넘기지 않으면 마지막화 페이지로 이동한다.
 	 *
 	 * @param titleId:
-	 * @return int:
+	 * @return int: 마지막화 번호
 	 * @throws Exception:
 	 */
 	private int getLastPageNumber(String titleId) throws Exception {

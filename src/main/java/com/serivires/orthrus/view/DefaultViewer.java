@@ -2,6 +2,7 @@ package com.serivires.orthrus.view;
 
 import java.io.File;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
@@ -38,7 +39,7 @@ public class DefaultViewer {
 
 		try {
 			velocityEngine.mergeTemplate("velocity/defaultView.vm", context, stringWriter);
-			FileUtils.write(file, stringWriter.toString());
+			FileUtils.write(file, stringWriter.toString(), Charset.forName("UTF-8"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
