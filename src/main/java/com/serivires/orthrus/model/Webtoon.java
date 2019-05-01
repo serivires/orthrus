@@ -10,7 +10,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @NoArgsConstructor
 public class Webtoon {
-    private String title;
-    private String id;
-    private int lastPage;
+	private String title;
+	private String id;
+	private int lastPage;
 }
