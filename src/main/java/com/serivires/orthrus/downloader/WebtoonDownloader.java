@@ -78,8 +78,8 @@ public class WebtoonDownloader {
 			final URI uri = buildDetailPageUri(webtoon.getId(), String.valueOf(i));
 			downloadCount += saveByOnePage(uri, prePath + i + File.separator);
 
-			System.out.println(String.format("%d개. %.1f%% 완료되었습니다.", downloadCount,
-				((double)i / (double)lastPageNumber) * 100.0));
+			System.out.println(String.format("%d개. %.1f%% 완료되었습니다.",
+				downloadCount, ((double)i / (double)lastPageNumber) * 100.0));
 		}
 
 		System.out.println("총 " + downloadCount + "개의파일이 다운로드 되었습니다.");

@@ -7,7 +7,7 @@ public class RunnerTest {
 	@Test
 	public void mainTest() throws Exception {
 		// given
-		String[] args = new String[] {"아메리카노 엑소더스"};
+		String[] args = new String[] {"에리타"};
 
 		// when
 		Runner.main(args);
