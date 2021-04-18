@@ -20,7 +20,7 @@ import com.serivires.orthrus.view.DefaultViewer;
 public class WebtoonDownloader {
 	private static Logger logger = LoggerFactory.getLogger(WebtoonDownloader.class);
 
-	private static final String DEFAULT_SYSTEM_PATH = String.format("%s\\Desktop", System.getProperty("user.home"));
+	private static final String DEFAULT_SYSTEM_PATH = String.format("%s%sDesktop", System.getProperty("user.home"), File.separator);
 
 	private final WebtoonParser webtoonParser;
 	private final DefaultViewer viewer;
@@ -72,7 +72,7 @@ public class WebtoonDownloader {
 		int downloadCount = 0;
 		final Webtoon webtoon = rawWebtoonInfo.get();
 		int lastPageNumber = webtoon.getLastPage();
-		final String prePath = String.format("%s\\%s\\", DEFAULT_SYSTEM_PATH, webtoon.getTitle());
+		final String prePath = String.format("%s%s%s%s", DEFAULT_SYSTEM_PATH, File.separator, webtoon.getTitle(), File.separator);
 
 		for (int i = 1; i <= lastPageNumber; i++) {
 			final URI uri = buildDetailPageUri(webtoon.getId(), String.valueOf(i));
