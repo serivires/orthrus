@@ -17,7 +17,8 @@ public class DefaultViewerTest {
 
 	@Test
 	public void writeTest() {
-		Map<String, Object> model = new HashMap<>();
+		final Map<String, Object> model = new HashMap<>();
+		model.put("title", "제목");
 		File file = new File("test.html");
 		defaultViewer.write(model, file);
 	}

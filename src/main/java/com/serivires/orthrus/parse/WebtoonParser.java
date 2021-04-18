@@ -13,7 +13,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.serivires.orthrus.model.Webtoon;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class WebtoonParser {
 
 	private Optional<Document> parse(final URL url, final int timeoutMillis) {
@@ -29,9 +31,6 @@ public class WebtoonParser {
 	 * <p>
 	 * <p>http://comic.naver.com/webtoon/detail.nhn?titleId=316912&no=188 <meta property="og:url"
 	 * content= "http://comic.naver.com/webtoon/detail.nhn?titleId=316912&amp;no=188">
-	 *
-	 * @param url:
-	 * @return int
 	 */
 	public int getLastPageNumber(final URL url) {
 		final Optional<Document> document = parse(url, 5000);
@@ -39,14 +38,11 @@ public class WebtoonParser {
 
 		final String lastPageUrl = doc.select("head meta[property=og:url]").first().attr("abs:content");
 		final String pageNumber = lastPageUrl.substring(lastPageUrl.indexOf("no=")).replace("no=", "");
-		return Integer.valueOf(pageNumber);
+		return Integer.parseInt(pageNumber);
 	}
 
 	/**
 	 * url에서 웹툰 고유 ID를 반환합니다.
-	 *
-	 * @param url:
-	 * @return String
 	 */
 	private String getIdBy(final String url) {
 		final int startIndex = url.indexOf("titleId=");
@@ -55,9 +51,6 @@ public class WebtoonParser {
 
 	/**
 	 * 웹툰 이름으로 검색된 결과의 첫번째 항목에 대한 정보를 반환합니다.
-	 *
-	 * @param url:
-	 * @return Webtoon
 	 */
 	public Optional<Webtoon> getWebtoonInfo(final URL url) {
 		final Optional<Document> rawDocument = parse(url, 5000);
@@ -80,10 +73,6 @@ public class WebtoonParser {
 
 	/**
 	 * 한 페이지 내에 있는 유효한 이미지 파일 주소 목록을 반환합니다.
-	 *
-	 * @param url:
-	 * @return List<String>
-	 * @throws IOException:
 	 */
 	public List<String> selectImageUrlsBy(final URL url) throws IOException {
 		final Document doc = Jsoup.parse(url, 5000);

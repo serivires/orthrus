@@ -9,7 +9,7 @@
             margin-right: auto;
         }
     </style>
-    <title></title>
+    <title>$title</title>
 </head>
 
 <body>
@@ -23,7 +23,7 @@
     <a id="next" href="javascript:void(0)" style="text-decoration:none"><span style="margin-left:30px;">&#9654;&#9654;</span></a>
 </div>
 <script>
-    var page = getPageNumber();
+    let page = getPageNumber();
     setHref("before", page - 1);
     setHref("next", page + 1);
 
@@ -32,13 +32,13 @@
             return false;
         }
 
-        var element = document.getElementById(id);
+        let element = document.getElementById(id);
         element.href = "../" + page + "/viewer.html";
         return true;
     }
 
     function getPageNumber() {
-        var hrefs = location.href.split("/");
+        let hrefs = location.href.split("/");
         return (hrefs[hrefs.length - 2]) * 1;
     }
 

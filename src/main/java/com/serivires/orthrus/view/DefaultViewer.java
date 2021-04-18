@@ -2,7 +2,7 @@ package com.serivires.orthrus.view;
 
 import java.io.File;
 import java.io.StringWriter;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
@@ -16,8 +16,6 @@ public class DefaultViewer {
 
 	/**
 	 * VelocityEngine 초기화
-	 *
-	 * @throws Exception:
 	 */
 	public DefaultViewer() throws Exception {
 		velocityEngine = new VelocityEngine();
@@ -29,9 +27,6 @@ public class DefaultViewer {
 
 	/**
 	 * defaultView.vm에 정보를 입력하여 viewer 파일을 생성합니다.
-	 *
-	 * @param model:
-	 * @param file:
 	 */
 	public void write(final Map<String, Object> model, final File file) {
 		final StringWriter stringWriter = new StringWriter();
@@ -39,9 +34,9 @@ public class DefaultViewer {
 
 		try {
 			velocityEngine.mergeTemplate("velocity/defaultView.vm", context, stringWriter);
-			FileUtils.write(file, stringWriter.toString(), Charset.forName("UTF-8"));
-		} catch (Exception e) {
-			e.printStackTrace();
+			FileUtils.write(file, stringWriter.toString(), StandardCharsets.UTF_8);
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 }

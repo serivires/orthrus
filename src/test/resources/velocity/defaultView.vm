@@ -9,7 +9,7 @@
             margin-right: auto;
         }
     </style>
-    <title></title>
+    <title>$title</title>
 </head>
 
 <body>
