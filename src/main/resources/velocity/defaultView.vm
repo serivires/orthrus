@@ -7,7 +7,7 @@
             background: #f4f5f6;
             border-bottom: .1rem solid #d1d1d1;
             display: block;
-            height: 5.2rem;
+            height: 3.2rem;
             left: 0;
             max-width: 100%;
             position: fixed;
@@ -15,12 +15,19 @@
             top: 0;
             width: 100%;
             z-index: 2;
+
+            box-sizing: border-box;
+            color: #606c76;
+            font-family: 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+            font-weight: 300;
+            letter-spacing: .01em;
+            line-height: 1.6
         }
 
         .navigation-title {
             display: inline;
-            font-size: 1.6rem;
-            line-height: 5.2rem;
+            font-size: 1.2rem;
+            line-height: 3.2rem;
             padding: 0;
             text-decoration: none;
         }
@@ -29,19 +36,19 @@
             box-sizing: inherit
         }
 
-        html {
-            box-sizing: border-box;
-            font-size: 62.5%
-        }
+        /*        html {
+                    box-sizing: border-box;
+                    font-size: 62.5%
+                }*/
 
-        body {
-            color: #606c76;
-            font-family: 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
-            font-size: 1.6em;
-            font-weight: 300;
-            letter-spacing: .01em;
-            line-height: 1.6
-        }
+        /*        body {
+                    color: #606c76;
+                    font-family: 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+                    font-size: 1.6em;
+                    font-weight: 300;
+                    letter-spacing: .01em;
+                    line-height: 1.6
+                }*/
 
         blockquote {
             border-left: 0.3rem solid #d1d1d1;
@@ -535,11 +542,11 @@
 </nav>
 <section class="container" style="text-align:center;">
     #foreach($fileName in $fileNames)
-    <div class="row row-center">
-        <div class="column">
-            <img src="$fileName">
+        <div class="row row-center">
+            <div class="column" style="margin-top:-4px;">
+                <img src="$fileName">
+            </div>
         </div>
-    </div>
     #end
 </section>
 

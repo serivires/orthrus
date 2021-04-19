@@ -14,8 +14,8 @@ public class Runner {
 	 * @throws Exception:
 	 */
 	public static void main(String[] args) throws Exception {
-		if (ArrayUtils.isEmpty(args)) {
-			System.out.println("제목을 올바르게 입력해 주세요.");
+		if (ArrayUtils.isEmpty(args) || args.length != 1) {
+			System.out.println("제목을 다시 입력해 주세요.");
 			return;
 		}
 

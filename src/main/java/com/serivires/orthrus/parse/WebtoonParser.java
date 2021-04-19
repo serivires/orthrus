@@ -29,8 +29,8 @@ public class WebtoonParser {
 	/**
 	 * 해당 페이지에 있는 현재 페이지 숫자 정보를 반환합니다.
 	 * <p>
-	 * <p>http://comic.naver.com/webtoon/detail.nhn?titleId=316912&no=188 <meta property="og:url"
-	 * content= "http://comic.naver.com/webtoon/detail.nhn?titleId=316912&amp;no=188">
+	 * <p>https://comic.naver.com/webtoon/detail.nhn?titleId=316912&no=188 <meta property="og:url"
+	 * content= "https://comic.naver.com/webtoon/detail.nhn?titleId=316912&amp;no=188">
 	 */
 	public int getLastPageNumber(final URL url) {
 		final Optional<Document> document = parse(url, 5000);

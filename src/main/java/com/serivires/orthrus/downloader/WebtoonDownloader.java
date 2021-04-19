@@ -33,7 +33,7 @@ public class WebtoonDownloader {
 	 * 실제 웹툰이 보여지는 페이지 주소를 반환합니다.
 	 */
 	URI buildDetailPageUri(String titleId, String no) {
-		return UriComponentsBuilder.fromHttpUrl("http://comic.naver.com").path("webtoon/detail.nhn")
+		return UriComponentsBuilder.fromHttpUrl("https://comic.naver.com").path("webtoon/detail.nhn")
 			.queryParam("titleId", titleId).queryParam("no", no).build().toUri();
 	}
 
@@ -42,9 +42,11 @@ public class WebtoonDownloader {
 	 */
 	URI buildWebtoonSearchPageUri(final String title) {
 		return UriComponentsBuilder
-			.fromHttpUrl("http://comic.naver.com")
+			.fromHttpUrl("https://comic.naver.com")
 			.path("search.nhn")
+			.queryParam("m", "webtoon")
 			.queryParam("keyword", title)
+			.queryParam("type", "title")
 			.encode()
 			.build()
 			.toUri();
@@ -136,7 +138,7 @@ public class WebtoonDownloader {
 	/**
 	 * 웹툰의 마지막화 번호를 반환합니다.
 	 *
-	 * - http://comic.naver.com/webtoon/detail.nhn?titleId=316912&no=188
+	 * - https://comic.naver.com/webtoon/detail.nhn?titleId=316912&no=188
 	 * - no 파라미터에 유효한 숫자를 넘기지 않으면 마지막화 페이지로 이동한다.
 	 */
 	private int getLastPageNumber(String titleId) throws Exception {
