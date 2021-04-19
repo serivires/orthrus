@@ -67,7 +67,7 @@ public class WebtoonDownloader {
 		System.out.println("<<" + title + ">> 다운로드");
 		for (int i = 1; i <= lastPageNumber; i++) {
 			final URI uri = buildDetailPageUri(webtoon.getId(), String.valueOf(i));
-			final String viewerTitle = String.format("%s - %d화", title, i);
+			final String viewerTitle = String.format("%s %d화", title, i);
 			downloadCount += saveByOnePage(uri, prePath + i + File.separator, viewerTitle);
 
 			System.out.printf("%d개. %.1f%% 완료되었습니다.%n",
@@ -112,10 +112,6 @@ public class WebtoonDownloader {
 
 	/**
 	 * 제목과 일치하는 웹툰 정보를 반환합니다.
-	 *
-	 * @param title:
-	 * @return Optional<Webtoon>
-	 * @throws Exception:
 	 */
 	private Optional<Webtoon> getWebtoonInfo(final String title) throws Exception {
 		final URI uri = buildWebtoonSearchPageUri(title);
