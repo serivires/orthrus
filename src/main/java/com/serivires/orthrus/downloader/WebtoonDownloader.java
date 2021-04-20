@@ -5,22 +5,23 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import org.springframework.web.util.UriComponentsBuilder;
 
 import com.serivires.orthrus.model.DownloadFileInfo;
 import com.serivires.orthrus.model.Webtoon;
 import com.serivires.orthrus.parse.WebtoonParser;
 import com.serivires.orthrus.view.DefaultViewer;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.HttpUrl;
 
 @Slf4j
 public class WebtoonDownloader {
 	private static final String DEFAULT_SYSTEM_PATH =
 			String.format("%s%sDesktop", System.getProperty("user.home"), File.separator);
 
+	private final FileDownload fileDownload = new FileDownload();
 	private final WebtoonParser webtoonParser;
 	private final DefaultViewer viewer;
 
@@ -32,24 +33,26 @@ public class WebtoonDownloader {
 	/**
 	 * 실제 웹툰이 보여지는 페이지 주소를 반환합니다.
 	 */
-	URI buildDetailPageUri(String titleId, String no) {
-		return UriComponentsBuilder.fromHttpUrl("https://comic.naver.com").path("webtoon/detail.nhn")
-			.queryParam("titleId", titleId).queryParam("no", no).build().toUri();
+	protected URI buildDetailPageUri(String titleId, String no) {
+		return Objects.requireNonNull(HttpUrl.parse("https://comic.naver.com/webtoon/detail.nhn"))
+				.newBuilder()
+				.addQueryParameter("titleId", titleId)
+				.addQueryParameter("no", no)
+				.build()
+				.uri();
 	}
 
 	/**
 	 * 웹툰 검색페이지 주소를 반환합니다.
 	 */
-	URI buildWebtoonSearchPageUri(final String title) {
-		return UriComponentsBuilder
-			.fromHttpUrl("https://comic.naver.com")
-			.path("search.nhn")
-			.queryParam("m", "webtoon")
-			.queryParam("keyword", title)
-			.queryParam("type", "title")
-			.encode()
-			.build()
-			.toUri();
+	protected URI buildWebtoonSearchPageUri(final String title) {
+		return Objects.requireNonNull(HttpUrl.parse("https://comic.naver.com/search.nhn"))
+				.newBuilder()
+				.addQueryParameter("m", "webtoon")
+				.addQueryParameter("keyword", title)
+				.addQueryParameter("type", "title")
+				.build()
+				.uri();
 	}
 
 	/**
@@ -64,16 +67,17 @@ public class WebtoonDownloader {
 		int downloadCount = 0;
 		final Webtoon webtoon = rawWebtoonInfo.get();
 		final int lastPageNumber = webtoon.getLastPage();
-		final String prePath = String.format("%s%s%s%s", DEFAULT_SYSTEM_PATH, File.separator, webtoon.getTitle(), File.separator);
+		final String prePath = String.format("%s%s%s%s",
+				DEFAULT_SYSTEM_PATH, File.separator, webtoon.getTitle(), File.separator);
 
-		System.out.println("<<" + title + ">> 다운로드");
+		System.out.println("<<" + webtoon.getTitle() + ">> 다운로드");
 		for (int i = 1; i <= lastPageNumber; i++) {
 			final URI uri = buildDetailPageUri(webtoon.getId(), String.valueOf(i));
-			final String viewerTitle = String.format("%s %d화", title, i);
+			final String viewerTitle = String.format("%s %d화", webtoon.getTitle(), i);
 			downloadCount += saveByOnePage(uri, prePath + i + File.separator, viewerTitle);
 
 			System.out.printf("%d개. %.1f%% 완료되었습니다.%n",
-				downloadCount, ((double)i / (double)lastPageNumber) * 100.0);
+					downloadCount, ((double)i / (double)lastPageNumber) * 100.0);
 		}
 
 		System.out.println("총 " + downloadCount + "개의파일이 다운로드 되었습니다.");
@@ -91,7 +95,7 @@ public class WebtoonDownloader {
 			return fileInfo;
 		}).collect(Collectors.toList());
 
-		FileDownloadUtils.parallel(fileUrlList);
+		fileDownload.parallel(fileUrlList);
 		writeViewer(imageUrlList, path, title);
 
 		return imageUrlList.size();

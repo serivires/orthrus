@@ -40,6 +40,6 @@ public class WebtoonDownloaderTest {
 
 		// then
 		assertThat(resultUri.getPath(), is("/search.nhn"));
-		assertThat(resultUri.getQuery(), is("keyword=신의 탑"));
+		assertThat(resultUri.getQuery(), is("m=webtoon&keyword=신의 탑&type=title"));
 	}
 }
